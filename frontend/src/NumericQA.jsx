@@ -18,7 +18,7 @@ function NumericQA(props) {
           />
         ) : (
           <span className="answerText">
-            <strong>answer:</strong> {props.aText}
+            <strong>answer:</strong> {props.aNumeric}
           </span>
         )}
       </span>
