@@ -23,7 +23,7 @@ cloudinary.config({
 const corsOptions = {
   origin: [
     "http://localhost:5173", // local dev URL
-    // "https://idyllic-malasada-07cdd7.netlify.app", // production URL on Netlify
+    "https://storied-rolypoly-96468a.netlify.app", // production URL on Netlify
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
