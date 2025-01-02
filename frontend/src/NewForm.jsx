@@ -14,6 +14,7 @@ function NewForm(props) {
   function handleLogout() {
     setQuestions([]);
     setCurrentUser(null);
+    setIsAnswering(false);
     navigate("/");
   }
 
@@ -47,6 +48,7 @@ function NewForm(props) {
     deleteTag,
     handleImageChange,
     handleSubmissionMode,
+    setIsAnswering,
   } = useQuestion();
 
   return (

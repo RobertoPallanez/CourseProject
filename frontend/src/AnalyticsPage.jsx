@@ -53,6 +53,7 @@ function AnalyticsPage(props) {
     avgCompletion,
     goToSubmitHistoryPage,
     formsByRegistered,
+    setIsAnswering,
   } = useQuestion();
 
   function handleLogout() {
@@ -62,6 +63,7 @@ function AnalyticsPage(props) {
     setSelectedAnswers(null);
     setSelectedFormQuestions(null);
     setForms(null);
+    setIsAnswering(false);
     navigate("/");
   }
 

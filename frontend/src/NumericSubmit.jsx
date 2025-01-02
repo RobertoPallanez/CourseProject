@@ -6,7 +6,7 @@ function NumericSubmit(props) {
       <div className="questionAndType">
         <div className="questionText">
           <span className="questionContentText">
-            <strong>-</strong> {props.number}
+            <strong>-</strong> {props.text}
           </span>
         </div>
       </div>

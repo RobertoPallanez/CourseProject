@@ -28,11 +28,13 @@ function AdminPage() {
     setCurrentUser,
     goToUserManager,
     goToFillingAdminPage,
+    setIsAnswering,
   } = useQuestion();
 
   function handleLogout() {
     setCurrentUser(null);
     navigate("/");
+    setIsAnswering(false);
   }
 
   return (

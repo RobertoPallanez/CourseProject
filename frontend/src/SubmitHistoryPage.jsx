@@ -22,6 +22,7 @@ function SubmitHistoryPage(props) {
     setSelectedAnswers,
     goToAnalyticsPage,
     BACKEND_URL,
+    setIsAnswering,
   } = useQuestion();
 
   function handleLogout() {
@@ -30,6 +31,7 @@ function SubmitHistoryPage(props) {
     setSelectedForm(null);
     setSelectedAnswers(null);
     setSelectedFormQuestions(null);
+    setIsAnswering(false);
     navigate("/");
   }
 

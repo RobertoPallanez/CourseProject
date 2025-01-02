@@ -29,6 +29,7 @@ function SubmittedAdminPage(props) {
     updatedAnswers,
     setUpdatedAnswers,
     BACKEND_URL,
+    setIsAnswering,
   } = useQuestion();
 
   useEffect(() => {
@@ -90,6 +91,7 @@ function SubmittedAdminPage(props) {
     setSelectedForm(null);
     setSelectedAnswers(null);
     setSelectedFormQuestions(null);
+    setIsAnswering(false);
     navigate("/");
   }
 

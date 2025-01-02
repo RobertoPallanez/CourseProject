@@ -54,6 +54,7 @@ function TemplatePage(props) {
     goToAnalyticsPage,
     goToSubmitHistoryPage,
     BACKEND_URL,
+    setIsAnswering,
   } = useQuestion();
 
   useEffect(() => {
@@ -69,6 +70,7 @@ function TemplatePage(props) {
     setTags([]);
     setCurrentUser(null);
     setSelectedForm(null);
+    setIsAnswering(false);
     navigate("/");
   }
 

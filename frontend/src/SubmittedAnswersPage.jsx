@@ -23,6 +23,7 @@ function SubmittedAnswersPage(props) {
     selectedAnswers,
     setSelectedAnswers,
     goToAnalyticsPage,
+    setIsAnswering,
   } = useQuestion();
 
   function handleLogout() {
@@ -31,6 +32,7 @@ function SubmittedAnswersPage(props) {
     setSelectedForm(null);
     setSelectedAnswers(null);
     setSelectedFormQuestions(null);
+    setIsAnswering(false);
     navigate("/");
   }
 

@@ -18,10 +18,12 @@ function UserManagerPage() {
     goToUserManager,
     goToFillingAdminPage,
     BACKEND_URL,
+    setIsAnswering,
   } = useQuestion();
 
   function handleLogout() {
     setCurrentUser(null);
+    setIsAnswering(false);
     navigate("/");
   }
 

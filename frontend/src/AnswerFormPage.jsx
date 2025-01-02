@@ -16,6 +16,7 @@ function AnswerFormPage(props) {
   function handleLogout() {
     setCurrentUser(null);
     setQuestions([]);
+    setIsAnswering(false);
     navigate("/");
   }
 
@@ -31,6 +32,7 @@ function AnswerFormPage(props) {
     selectedQuestions,
     existingAnswers,
     BACKEND_URL,
+    setIsAnswering,
   } = useQuestion();
 
   useEffect(() => {

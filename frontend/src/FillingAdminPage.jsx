@@ -15,10 +15,12 @@ function FillingAdminPage() {
     setCurrentUser,
     goToUserManager,
     backToManager,
+    setIsAnswering,
   } = useQuestion();
 
   function handleLogout() {
     setCurrentUser(null);
+    setIsAnswering(false);
     navigate("/");
   }
 

@@ -57,7 +57,8 @@ export function QuestionProvider({ children }) {
   const [formsByRegistered, setFormsByRegistered] = useState(0);
   const [analyticsTrigger, setAnalyticsTrigger] = useState(false);
 
-  const BACKEND_URL = "http://localhost:5000";
+  // const BACKEND_URL = "http://localhost:5000";
+  const BACKEND_URL = "https://courseproject-reactiveforms.onrender.com";
 
   const navigate = useNavigate();
 
@@ -268,6 +269,7 @@ export function QuestionProvider({ children }) {
   }
 
   async function backToManager() {
+    setIsAnswering(false);
     setQuestions([]);
     setTags([]);
     setQuestion({});

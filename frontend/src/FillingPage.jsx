@@ -9,33 +9,18 @@ function FillingPage() {
   const navigate = useNavigate();
 
   const {
-    input,
-    handleQuestionInput,
-    type,
-    handleQuestionType,
-    question,
-    addQuestion,
-    questions,
-    checkboxInput,
-    handleCheckboxInput,
-    checkboxes,
-    addCheckbox,
-    deleteQuestion,
     templates,
-    addForm,
-    formName,
-    handleFormName,
     newFormPage,
     currentUser,
     setCurrentUser,
     backToManager,
-    isAnswering,
     setIsAnswering,
     answerFormPage,
   } = useQuestion();
 
   function handleLogout() {
     setCurrentUser(null);
+    setIsAnswering(false);
     navigate("/");
   }
 

@@ -15,6 +15,7 @@ function ModifyAnswersPage(props) {
   function handleLogout() {
     setCurrentUser(null);
     setQuestions([]);
+    setIsAnswering(false);
     navigate("/");
   }
 
@@ -32,6 +33,7 @@ function ModifyAnswersPage(props) {
     setUpdatedAnswers,
     setSelectedForm,
     BACKEND_URL,
+    setIsAnswering,
   } = useQuestion();
 
   useEffect(() => {
