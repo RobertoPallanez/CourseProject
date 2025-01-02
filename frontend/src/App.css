@@ -1,0 +1,1201 @@
+body {
+  background-color: white;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+}
+
+.loginPage {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 0;
+}
+
+.navBar {
+  color: rgb(65, 64, 64);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 70px;
+  font-size: 1.5rem;
+  font-family: "Product Sans";
+  border-bottom: 1px solid rgb(211, 211, 211);
+  margin-bottom: 20px;
+}
+
+.loginForm {
+  width: 20rem;
+}
+
+.py-2 {
+  background-color: #6928b8;
+  border: none;
+  outline: none;
+}
+
+.signUpButton {
+  color: #6928b8;
+  font-weight: 550;
+  transition: 0.3s ease;
+}
+
+.signUpButton:hover {
+  cursor: pointer;
+  color: #361164;
+}
+
+.navbarIcon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+.loginHeader {
+  margin-bottom: 100px;
+  font-family: "Product Sans";
+  font-size: 3rem;
+}
+
+.sloganSpan {
+  color: #6928b8;
+}
+
+.managerPage {
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 480px) {
+  .formsContainer {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding: 5px;
+    background-color: rgb(245, 245, 245);
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 15px;
+  }
+
+  .formsContainerAdmin {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding: 5px;
+    background-color: #ffeee6;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 15px;
+  }
+
+  .usersContainer {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding: 5px;
+    background-color: rgb(245, 245, 245);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .formBody,
+  .createForm {
+    display: flex;
+    flex-direction: column;
+    height: 110px;
+    width: 220px;
+    background-color: white;
+    padding: 10px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: sans-serif;
+  }
+}
+
+@media (max-width: 479px) {
+  .formsContainer {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding: 10px;
+    background-color: rgb(245, 245, 245);
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 15px;
+  }
+
+  .formsContainerAdmin {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding: 5px;
+    background-color: #ffeee6;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 15px;
+  }
+
+  .usersContainer {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding: 5px;
+    background-color: rgb(245, 245, 245);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .formBody,
+  .createForm {
+    display: flex;
+    flex-direction: column;
+    height: 110px;
+    width: 80%;
+    background-color: white;
+    padding: 10px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: sans-serif;
+  }
+}
+
+.formBody:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.createForm {
+  justify-content: center;
+  align-items: center;
+}
+
+.createForm:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: lightgrey;
+}
+
+.topicHeader {
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  padding-right: 10px;
+  font-style: italic;
+  color: #a3a3a3;
+  font-weight: bold;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.addFormIcon {
+  width: 50px;
+  height: 50px;
+}
+
+.formName {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+
+.formTopic {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #a3a3a3;
+  font-style: italic;
+}
+
+.formAuthor {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.formDate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.welcomeMessage,
+.createMessage {
+  width: 100%;
+  justify-content: left;
+  background-color: rgb(245, 245, 245);
+  padding-left: 10px;
+  font-family: "Product Sans";
+}
+
+.welcomeMessageAdmin,
+.createMessageAdmin {
+  width: 100%;
+  justify-content: left;
+  background-color: #ffeee6;
+  padding-left: 10px;
+  font-family: "Product Sans";
+}
+
+.messagesAndLogout {
+  padding: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: rgb(245, 245, 245);
+  justify-content: space-between;
+}
+
+.messagesAndLogoutAdmin {
+  padding: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #ffeee6;
+  justify-content: space-between;
+}
+
+.bannerAndLogout {
+  display: flex;
+  justify-content: right;
+  align-items: right;
+  width: 100%;
+}
+
+.templateEditor {
+  width: 180px;
+  background-color: #6928b8;
+  color: white;
+  font-weight: bold;
+  font-family: "Product Sans";
+}
+
+.editorAndSubmitButtons {
+  width: fit-content;
+  gap: 5px;
+  margin: 10px;
+}
+
+.editorAndSubmitButtons button {
+  background-color: #6928b8;
+  color: white;
+  border: 0px;
+  width: fit-content;
+  border-radius: 5px;
+  transition: 0.3s ease;
+}
+
+.editorAndSubmitButtons button:hover {
+  background-color: #361164;
+  transform: scale(1.05);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(245, 245, 245);
+}
+
+.messagesAdmin {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffeee6;
+}
+
+.createMessage {
+  font-weight: bold;
+}
+
+.logoutButton {
+  width: fit-content;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: right;
+}
+
+.logoutButton:hover {
+  color: #6928b8;
+  cursor: pointer;
+}
+
+.roleMessage {
+  background-color: #6928b8;
+  width: fit-content;
+  color: white;
+  font-family: "Product Sans";
+  padding-left: 5px;
+  padding-right: 5px;
+  font-weight: bold;
+}
+
+.adminMessage {
+  background-color: rgb(196, 150, 26);
+  width: fit-content;
+  color: white;
+  font-family: "Product Sans";
+  padding-left: 5px;
+  padding-right: 5px;
+  font-weight: bold;
+}
+
+.newFormPage {
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 999px) {
+  .newFormPage {
+    width: 100%;
+  }
+
+  .managerPage {
+    width: 100%;
+  }
+}
+
+.formCreated {
+  width: fit-content;
+  height: 38px;
+  border: none;
+  font-size: 1.15em;
+  color: white;
+  font-family: "Product Sans";
+  background-color: #6928b8;
+  margin-left: 5px;
+  border-radius: 5px;
+  transition: 0.3s ease;
+}
+
+.formDeleted {
+  width: fit-content;
+  height: 38px;
+  border: none;
+  font-size: 1.15em;
+  color: white;
+  font-family: "Product Sans";
+  background-color: #d6211b;
+  margin-left: 5px;
+  border-radius: 5px;
+  transition: 0.3s ease;
+}
+
+.backToManagerButton {
+  width: fit-content;
+  height: 38px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.15em;
+  color: white;
+  font-family: "Product Sans";
+  background-color: #919191;
+  transition: 0.3s ease;
+}
+
+.formCreated:hover {
+  transform: scale(1.05);
+  background-color: #361164;
+}
+
+.formDeleted:hover {
+  transform: scale(1.05);
+  background-color: darkred;
+}
+
+.backToManagerButton:hover {
+  transform: scale(1.05);
+  background-color: rgb(99, 98, 98);
+}
+
+.formNameInput {
+  width: 95%;
+  max-width: 700px;
+  margin: 10px;
+  border: 1px solid rgb(223, 223, 223);
+}
+
+.questionsCreator {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+  justify-content: space-between;
+  padding: 10px;
+  gap: 5px;
+}
+
+.questionInput {
+  width: 100%;
+  border: 1px solid rgb(223, 223, 223);
+}
+
+.tagInput {
+  width: 178px;
+  border: 1px solid rgb(223, 223, 223);
+}
+
+.tagsContainer {
+  display: flex;
+  width: 100%;
+  height: fit-content;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.tag {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  border: 1px solid rgb(179, 179, 179);
+  border-radius: 10px;
+  padding-right: 5px;
+  padding-left: 5px;
+  color: #7c7c7c;
+  cursor: pointer;
+}
+
+.deleteTag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #8d8d8d;
+  transition: 0.3s ease;
+  margin-left: 10px;
+  margin-right: 5px;
+  margin-bottom: 2px;
+  transition: 0.3s ease;
+}
+
+.deleteTag:hover {
+  color: black;
+  transform: scale(1.1);
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.questionTypeSelector {
+  border: 1px solid rgb(165, 165, 165);
+  height: 28px;
+}
+
+.addButton {
+  background-color: #6928b8;
+  border: none;
+  color: white;
+  height: 28px;
+}
+
+.questionsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  gap: 5px;
+}
+
+.questionObject {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.questionAndType {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.questionAndType span {
+  display: flex;
+  width: fit-content;
+}
+.answerInput {
+  border: 1px solid rgb(221, 221, 221);
+}
+
+.selectedType {
+  width: fit-content;
+  border: 1px solid rgb(172, 172, 172);
+  padding-right: 3px;
+  padding-left: 3px;
+  background-color: #dacdeb;
+}
+
+.questionName {
+  font-weight: bold;
+  margin-right: 5px;
+  width: fit-content;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.questionContent {
+  width: 100%;
+  border: none;
+  outline: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.questionContent:focus {
+  outline: 1px solid black;
+}
+
+.questionContentText {
+  width: 100%;
+  display: flex;
+  justify-content: left;
+}
+
+.questionContentText strong {
+  margin-right: 5px;
+}
+
+.questionText {
+  width: 100%;
+  display: flex;
+  justify-content: left;
+}
+
+.questionFormat {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.multichoiceContainer {
+  display: flex;
+  margin-top: 10px;
+  margin-left: 10px;
+  gap: 10px;
+  justify-content: start;
+}
+
+.multichoiceOptions {
+  display: inline;
+}
+
+.multichoiceLabels {
+  display: inline;
+  border: 1px solid lightgray;
+  padding-left: 3px;
+}
+
+.multichoiceCheckbox {
+  margin-top: 2px;
+}
+
+.addCheckboxButton {
+  background-color: #6928b8;
+  border: none;
+  color: white;
+  height: 28px;
+  width: 35px;
+  margin-top: 5px;
+  margin-left: 35px;
+  font-weight: bold;
+}
+
+.typeAndDeleteButton {
+  width: 240px;
+  display: flex;
+  justify-content: right;
+}
+
+.deleteIcon {
+  width: 26px;
+  height: 26px;
+  background-color: rgb(218, 218, 218);
+  margin-left: 5px;
+  transition: 0.3s ease;
+}
+
+.deleteIcon:hover {
+  transform: scale(1.1);
+  background-color: #cc140d;
+  border-radius: 5px;
+}
+
+.currentFormHeader {
+  font-weight: bold;
+  background-color: rgb(247, 247, 247);
+  margin-top: 0px;
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.currentDescriptionHeader {
+  font-weight: normal;
+  margin-top: 0px;
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.currentFormHeaderText {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  background-color: rgb(231, 231, 231);
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.currentDescriptionHeaderText {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-weight: normal;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.currentFormHeader:focus {
+  outline: 1px solid black;
+}
+
+.currentDescriptionHeader:focus {
+  outline: 1px solid black;
+}
+
+.formPreview {
+  margin-top: 10px;
+  margin-bottom: 0px;
+  background-color: #f4ecf5;
+}
+
+.formsAndUsers {
+  display: flex;
+  justify-content: left;
+  color: white;
+  gap: 5px;
+}
+
+.myTemplatesAndPublicForms {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  gap: 5px;
+}
+
+.adminForms,
+.publicForms,
+.userTemplates {
+  background-color: #6928b8;
+  border: none;
+  color: rgb(255, 255, 255);
+  font-family: "Product Sans";
+  transition: 0.3s ease;
+}
+
+.adminForms:hover,
+.publicForms:hover,
+.userTemplates:hover {
+  background-color: #361164;
+  transform: scale(1.05);
+}
+
+.adminUsers {
+  background-color: #6928b8;
+  border: none;
+  color: white;
+  font-family: "Product Sans";
+  transition: 0.3s ease;
+}
+
+.adminUsers:hover {
+  background-color: #361164;
+  transform: scale(1.05);
+}
+
+@media (min-width: 770px) {
+  .userInfo {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 0.2fr 0.4fr 0.1fr 0.1fr 0.2fr;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .userTableHeaders {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 0.2fr 0.4fr 0.1fr 0.1fr 0.2fr;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-weight: bold;
+    padding-left: 10px;
+  }
+}
+
+@media (max-width: 769px) {
+  .userInfo {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 0.3fr 0.15fr 0.15fr 0.4fr;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .userTableHeaders {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 0.3fr 0.15fr 0.15fr 0.4fr;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-weight: bold;
+    padding-left: 10px;
+  }
+
+  .userEmail {
+    display: none;
+  }
+
+  .manageUserOptions {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .userName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block, or inline-block if needed;
+    min-width: 100%;
+  }
+
+  .emailSpan {
+    display: none;
+  }
+}
+
+.userInfo:hover {
+  background-color: rgb(235, 235, 235);
+  cursor: pointer;
+}
+
+.demoteIcon {
+  height: 20px;
+  width: 25px;
+  margin-top: 2px;
+  transition: 0.3s ease-in;
+}
+
+.demoteIcon:hover {
+  transform: scale(1.2);
+}
+
+.manageUserOptions {
+  gap: 10px;
+}
+
+.userName {
+  justify-content: left;
+  margin: 0px;
+}
+
+.userRole {
+  display: flex;
+  justify-content: center;
+}
+
+.submissionHeaders {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+.submissionRow {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding-right: 10px;
+  padding-left: 10px;
+  transition: 0.3s ease;
+}
+
+.submissionRow:hover {
+  background-color: #ecebeb;
+  cursor: pointer;
+  transform: scale(1.005);
+}
+
+.QABody {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 100%;
+}
+
+.answerBody {
+  background-color: #eeeeee;
+  padding-right: 5px;
+  padding-left: 10px;
+}
+
+.ESAIcon {
+  width: 25px;
+  height: auto;
+  margin: 5px;
+}
+
+.templateDataContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #eeeeee;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.templateDataGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  gap: 15px;
+  padding: 10px;
+  margin-bottom: 15px;
+  height: fit-content;
+}
+
+.templateData {
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  font-size: 0.95rem;
+  color: #4b4b4b;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.templateData strong {
+  margin-left: 5px;
+}
+
+.QASelectorContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.answerDataContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+
+.QASelector {
+  width: 90%;
+  box-sizing: border-box;
+  border: 1px solid lightgray;
+}
+
+.QASelector option {
+  box-sizing: border-box;
+}
+
+.questionTextAndTypeContainer {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+}
+
+.questionDataText {
+  justify-content: start;
+}
+
+.answerDataPoints {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 15px;
+  padding: 10px;
+  background-color: #f0f0f0;
+}
+
+.strongCheck {
+  color: red;
+  margin-right: 5px;
+}
+
+.strongCheck2 {
+  color: green;
+  margin-right: 5px;
+}
+
+.templatePieChartsContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  padding: 10px;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.pieChart {
+  width: 160px;
+  height: 160px;
+}
+
+@media (max-width: 849px) {
+  .templateDataGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 15px;
+    padding: 10px;
+    margin-bottom: 15px;
+    height: fit-content;
+  }
+
+  .answerDataPoints {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 15px;
+    padding: 10px;
+    background-color: #f0f0f0;
+  }
+}
+
+.checkedIcon {
+  width: 15px;
+  height: 15px;
+  margin-bottom: 2px;
+}
+
+.templateAndTopicContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: left;
+  padding: 10px;
+  gap: 10px;
+}
+
+.templateAndTopicContainer div {
+  width: fit-content;
+  color: #464646;
+}
+
+.templateTopicSelector {
+  width: 220px;
+  border: 1px solid lightgray;
+  color: #4b4b4b;
+  margin-bottom: 15px;
+}
+
+.allowSubmitsSelector {
+  width: 220px;
+  border: 1px solid lightgray;
+  color: #4b4b4b;
+  margin-bottom: 15px;
+}
+
+#image {
+  margin-bottom: 15px;
+  width: fit-content;
+  color: #4b4b4b;
+}
+
+#image:hover {
+  cursor: pointer;
+}
+
+.searchBar {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  justify-content: center;
+  background-color: inherit;
+  margin-top: 15px;
+}
+
+.searchInput {
+  width: 200px;
+  height: 30px;
+  border: 1px solid lightgray;
+  padding-left: 5px;
+}
+
+.searchIcon {
+  width: 35px;
+  height: 30px;
+  background-color: #ffffff;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid lightgray;
+  border-left: none;
+  transition: 0.3s ease;
+}
+
+.searchIcon:hover {
+  background-color: #aaaaaa;
+}
+
+.clearFilter {
+  width: 35px;
+  height: 30px;
+  background-color: #ffffff;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid lightgray;
+  border-right: none;
+  transition: 0.3s ease;
+}
+
+.clearFilter:hover {
+  background-color: #aaaaaa;
+}
+
+.imageContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.templateImage {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
+  border-radius: 50%;
+}
+
+.declineContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.declineMessage {
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgb(99, 98, 98);
+  padding: 10px;
+}
+
+.tagContainer {
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+  width: fit-content;
+  height: fit-content;
+}
+
+.existingTagInput {
+  box-sizing: content-box;
+  border: none;
+}
+
+.tagsAdder {
+  margin-top: 15px;
+}
+
+.dragIcon {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+}
+
+.checkboxLabelForAnswer {
+  margin-right: 5px;
+}
+
+.createOrBackButton {
+  margin-bottom: 10px;
+}
