@@ -23,7 +23,7 @@ cloudinary.config({
 const corsOptions = {
   origin: [
     "http://localhost:5173", // local dev URL
-    "reactiveformscourseproject.netlify.app", // production URL on Netlify
+    "https://reactiveformscourseproject.netlify.app", // production URL on Netlify
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
