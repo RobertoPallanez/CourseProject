@@ -63,12 +63,14 @@ function LoginPage(props) {
   }
 
   async function handleContinueButton() {
+    setIsLoading(true);
     try {
       const response = await axios.get(`${BACKEND_URL}/allTemplates`);
       const allTemplates = response.data.templates;
 
       setTemplates(allTemplates);
       setForms(null);
+      setIsLoading(false);
       setError("");
     } catch (err) {
       console.error("Couldnt retrieve all fillable forms.");
@@ -131,14 +133,24 @@ function LoginPage(props) {
           </div>
         )}
         <p className="mt-1 mb-1 text-body-secondary">
-          <span className="signUpButton" onClick={handleContinueButton}>
+          <span
+            className="signUpButton"
+            onClick={handleContinueButton}
+            role="button"
+            tabIndex="0"
+          >
             Continue
           </span>{" "}
           without login to answer a form.
         </p>
         <p className="mt-4 mb-3 text-body-secondary">
           Dont have an account?{" "}
-          <span className="signUpButton" onClick={navigateSignupPage}>
+          <span
+            className="signUpButton"
+            onClick={navigateSignupPage}
+            role="button"
+            tabIndex="0"
+          >
             Sign up
           </span>{" "}
           for free.

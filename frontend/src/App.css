@@ -52,11 +52,13 @@ div {
   color: #6928b8;
   font-weight: 550;
   transition: 0.3s ease;
+  user-select: none;
 }
 
 .signUpButton:hover {
   cursor: pointer;
   color: #361164;
+  user-select: none;
 }
 
 .navbarIcon {

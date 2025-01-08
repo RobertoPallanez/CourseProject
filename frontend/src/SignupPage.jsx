@@ -14,11 +14,13 @@ function SignupPage() {
 
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { currentUser, setCurrentUser, setTemplates, BACKEND_URL } =
     useQuestion();
 
   async function handleSignupButton(e) {
+    setIsLoading(true);
     try {
       e.preventDefault();
       const response = await axios.post(`${BACKEND_URL}/Register`, {
@@ -26,7 +28,7 @@ function SignupPage() {
         email: email,
         password: password,
       });
-
+      setIsLoading(false);
       if (response.data.message !== "User email already taken.") {
         const token = response.data.token;
         localStorage.setItem("authToken", token);
@@ -117,9 +119,19 @@ function SignupPage() {
         >
           Sign up
         </button>
+        {isLoading && (
+          <div className="spinner2-container">
+            <div className="spinner2"></div>
+          </div>
+        )}
         <p className="mt-5 mb-3 text-body-secondary">
           Already have an account?{" "}
-          <span className="signUpButton" onClick={navigateToLoginPage}>
+          <span
+            className="signUpButton"
+            onClick={navigateToLoginPage}
+            role="button"
+            tabIndex="0"
+          >
             Sign in
           </span>
           {"."}
