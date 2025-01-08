@@ -626,6 +626,7 @@ div {
   margin-left: 10px;
   gap: 10px;
   justify-content: start;
+  width: fit-content;
 }
 
 .multichoiceOptions {
@@ -636,6 +637,7 @@ div {
   display: inline;
   border: 1px solid lightgray;
   padding-left: 3px;
+  width: 160px;
 }
 
 .multichoiceCheckbox {
