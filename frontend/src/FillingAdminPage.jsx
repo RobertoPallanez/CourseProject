@@ -4,12 +4,14 @@ import NavBar from "./NavBar";
 import FormItem from "./FormItem";
 import { useQuestion } from "./QuestionContext";
 import SearchBar from "./SearchBar";
+import { useEffect } from "react";
 
 function FillingAdminPage() {
   const navigate = useNavigate();
 
   const {
     templates,
+    setTemplates,
     newFormPage,
     currentUser,
     setCurrentUser,
@@ -21,8 +23,24 @@ function FillingAdminPage() {
   function handleLogout() {
     setCurrentUser(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
+
+  useEffect(() => {
+    const loggedUser = localStorage.getItem("loggedUser");
+    setCurrentUser(loggedUser ? JSON.parse(loggedUser) : null);
+
+    const userTemplates = localStorage.getItem("templates");
+    setTemplates(
+      userTemplates
+        ? userTemplates !== undefined
+          ? JSON.parse(userTemplates)
+          : []
+        : null
+    );
+  }, []);
 
   return (
     <div className="managerPage">
@@ -30,7 +48,9 @@ function FillingAdminPage() {
       <div className="messagesAndLogout">
         <div className="messages">
           <div className="adminMessage">ADMIN CONTROL PANEL</div>
-          <div className="welcomeMessage">Hi, {currentUser.name}</div>
+          <div className="welcomeMessage">
+            Hi, {currentUser?.name || "Guest"}
+          </div>
           <div className="createMessage">
             Pick one of all users templates to submit your answers:
           </div>
@@ -60,6 +80,7 @@ function FillingAdminPage() {
               name={template.name}
               author={template.author_name}
               date={template.creation_date}
+              last_update={template.last_update}
               topic={template.topic}
               questions={template.questions}
               newFormPage={newFormPage}

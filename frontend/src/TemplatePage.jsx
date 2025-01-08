@@ -25,6 +25,7 @@ function TemplatePage(props) {
     tagInput,
     handleTagInput,
     type,
+    setType,
     handleQuestionType,
     addQuestion,
     addTag,
@@ -55,14 +56,20 @@ function TemplatePage(props) {
     goToSubmitHistoryPage,
     BACKEND_URL,
     setIsAnswering,
+    getAllTemplates,
+    getUserTemplates,
   } = useQuestion();
 
   useEffect(() => {
+    setType("short answer");
     setSelectedForm(null);
-    setUpdatedName(selectedTemplate.name);
-    setUpdatedDescription(selectedTemplate.description);
+    setUpdatedName(selectedTemplate ? selectedTemplate.name : null);
+    setUpdatedDescription(
+      selectedTemplate ? selectedTemplate.description : null
+    );
     setUpdatedQuestions(selectedQuestions);
     setUpdatedTags(selectedTags);
+    localStorage.removeItem("authToken");
   }, []);
 
   function handleLogout() {
@@ -71,6 +78,8 @@ function TemplatePage(props) {
     setCurrentUser(null);
     setSelectedForm(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 
@@ -130,9 +139,15 @@ function TemplatePage(props) {
       setUpdatedQuestions(questionsUpdated);
       setUpdatedTags(tagsUpdated);
       setQuestions([]);
+      if (currentUser.role == "admin") {
+        getAllTemplates();
+      } else {
+        getUserTemplates();
+      }
       alert("Changes saved successfully.");
       backToManager();
     } catch (error) {
+      alert("Could not create template. Please try again.");
       console.error("Error saving changes:", error);
     }
   }
@@ -173,7 +188,9 @@ function TemplatePage(props) {
           </button>
         </div>
         <div className="messages">
-          <div className="welcomeMessage">Hi, {currentUser.name}</div>
+          <div className="welcomeMessage">
+            Hi, {currentUser?.name || "Guest"}
+          </div>
           <div className="createMessage">
             Rename your template, add, edit or delete your questions
           </div>
@@ -243,7 +260,14 @@ function TemplatePage(props) {
                     </div>
                   );
                 })}
-                <button className="addCheckboxButton" onClick={addCheckbox}>
+                <button
+                  className="addCheckboxButton"
+                  onClick={addCheckbox}
+                  style={{
+                    backgroundColor: checkboxes.length > 0 ? "gray" : "",
+                    cursor: checkboxes.length > 0 ? "not-allowed" : "pointer",
+                  }}
+                >
                   +
                 </button>
               </>
@@ -286,14 +310,22 @@ function TemplatePage(props) {
           onChange={handleDescriptionChange}
           wrap="soft"
         />
-        <div className="topicHeader">{selectedTemplate.topic}</div>
+        <div className="topicHeader">
+          {selectedTemplate ? selectedTemplate.topic : ""}
+        </div>
         <div
           className="imageContainer"
-          style={{ display: selectedTemplate.image_url ? "flex" : "none" }}
+          style={{
+            display: selectedTemplate
+              ? selectedTemplate.image_url
+                ? "flex"
+                : "none"
+              : null,
+          }}
         >
           <p className="imageHeader">Reference Image:</p>
           <img
-            src={selectedTemplate.image_url}
+            src={selectedTemplate ? selectedTemplate.image_url : null}
             className="templateImage"
             alt="Template Image"
           />
@@ -310,106 +342,116 @@ function TemplatePage(props) {
                   gap: "10px",
                 }}
               >
-                {updatedQuestions.map((question, index) => (
-                  <Draggable
-                    key={question.id}
-                    draggableId={question.id.toString()}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
+                {updatedQuestions
+                  ? updatedQuestions.map((question, index) => (
+                      <Draggable
+                        key={question.id}
+                        draggableId={question.id.toString()}
+                        index={index}
                       >
-                        {question.question_type === "short answer" && (
-                          <ShortAnswer
-                            id={index}
-                            key={question.id}
-                            value={
-                              updatedQuestions.find(
-                                (element) => element.id === question.id
-                              )?.question_text || ""
-                            }
-                            handleInputChange={handleInputChange}
-                            questionId={question.id}
-                            text={question.question_text}
-                            type={question.question_type}
-                            questionsToDelete={questionsToDelete}
-                            handleQuestionsToDelete={handleQuestionsToDelete}
-                            deleteQuestion={deleteQuestion}
-                            deleteFromSelected={deleteFromSelected}
-                            selectedForm={selectedTemplate}
-                          />
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            {question.question_type === "short answer" && (
+                              <ShortAnswer
+                                id={index}
+                                key={question.id}
+                                value={
+                                  updatedQuestions.find(
+                                    (element) => element.id === question.id
+                                  )?.question_text || ""
+                                }
+                                handleInputChange={handleInputChange}
+                                questionId={question.id}
+                                text={question.question_text}
+                                type={question.question_type}
+                                questionsToDelete={questionsToDelete}
+                                handleQuestionsToDelete={
+                                  handleQuestionsToDelete
+                                }
+                                deleteQuestion={deleteQuestion}
+                                deleteFromSelected={deleteFromSelected}
+                                selectedForm={selectedTemplate}
+                              />
+                            )}
+                            {question.question_type === "paragraph" && (
+                              <Paragraph
+                                id={index}
+                                selectedId={question.id}
+                                key={question.id}
+                                value={
+                                  updatedQuestions.find(
+                                    (element) => element.id === question.id
+                                  )?.question_text || ""
+                                }
+                                handleInputChange={handleInputChange}
+                                questionId={question.id}
+                                text={question.question_text}
+                                type={question.question_type}
+                                questionsToDelete={questionsToDelete}
+                                handleQuestionsToDelete={
+                                  handleQuestionsToDelete
+                                }
+                                deleteQuestion={deleteQuestion}
+                                deleteFromSelected={deleteFromSelected}
+                                selectedForm={selectedTemplate}
+                              />
+                            )}
+                            {question.question_type === "checkbox" && (
+                              <Checkboxes
+                                id={index}
+                                selectedId={question.id}
+                                key={question.id}
+                                value={
+                                  updatedQuestions.find(
+                                    (element) => element.id === question.id
+                                  )?.question_text || ""
+                                }
+                                handleInputChange={handleInputChange}
+                                questionId={question.id}
+                                text={question.question_text}
+                                type={question.question_type}
+                                questionsToDelete={questionsToDelete}
+                                handleQuestionsToDelete={
+                                  handleQuestionsToDelete
+                                }
+                                checkboxes={question.options}
+                                deleteQuestion={deleteQuestion}
+                                deleteFromSelected={deleteFromSelected}
+                                selectedForm={selectedTemplate}
+                              />
+                            )}
+                            {question.question_type === "numeric answer" && (
+                              <NumericAnswer
+                                id={index}
+                                selectedId={question.id}
+                                key={question.id}
+                                value={
+                                  updatedQuestions.find(
+                                    (element) => element.id === question.id
+                                  )?.question_text || ""
+                                }
+                                handleInputChange={handleInputChange}
+                                questionId={question.id}
+                                text={question.question_text}
+                                type={question.question_type}
+                                questionsToDelete={questionsToDelete}
+                                handleQuestionsToDelete={
+                                  handleQuestionsToDelete
+                                }
+                                deleteQuestion={deleteQuestion}
+                                deleteFromSelected={deleteFromSelected}
+                                selectedForm={selectedTemplate}
+                              />
+                            )}
+                          </div>
                         )}
-                        {question.question_type === "paragraph" && (
-                          <Paragraph
-                            id={index}
-                            selectedId={question.id}
-                            key={question.id}
-                            value={
-                              updatedQuestions.find(
-                                (element) => element.id === question.id
-                              )?.question_text || ""
-                            }
-                            handleInputChange={handleInputChange}
-                            questionId={question.id}
-                            text={question.question_text}
-                            type={question.question_type}
-                            questionsToDelete={questionsToDelete}
-                            handleQuestionsToDelete={handleQuestionsToDelete}
-                            deleteQuestion={deleteQuestion}
-                            deleteFromSelected={deleteFromSelected}
-                            selectedForm={selectedTemplate}
-                          />
-                        )}
-                        {question.question_type === "checkbox" && (
-                          <Checkboxes
-                            id={index}
-                            selectedId={question.id}
-                            key={question.id}
-                            value={
-                              updatedQuestions.find(
-                                (element) => element.id === question.id
-                              )?.question_text || ""
-                            }
-                            handleInputChange={handleInputChange}
-                            questionId={question.id}
-                            text={question.question_text}
-                            type={question.question_type}
-                            questionsToDelete={questionsToDelete}
-                            handleQuestionsToDelete={handleQuestionsToDelete}
-                            checkboxes={question.options}
-                            deleteQuestion={deleteQuestion}
-                            deleteFromSelected={deleteFromSelected}
-                            selectedForm={selectedTemplate}
-                          />
-                        )}
-                        {question.question_type === "numeric answer" && (
-                          <NumericAnswer
-                            id={index}
-                            selectedId={question.id}
-                            key={question.id}
-                            value={
-                              updatedQuestions.find(
-                                (element) => element.id === question.id
-                              )?.question_text || ""
-                            }
-                            handleInputChange={handleInputChange}
-                            questionId={question.id}
-                            text={question.question_text}
-                            type={question.question_type}
-                            questionsToDelete={questionsToDelete}
-                            handleQuestionsToDelete={handleQuestionsToDelete}
-                            deleteQuestion={deleteQuestion}
-                            deleteFromSelected={deleteFromSelected}
-                            selectedForm={selectedTemplate}
-                          />
-                        )}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                      </Draggable>
+                    ))
+                  : null}
                 {provided.placeholder}
               </div>
             )}
@@ -472,39 +514,41 @@ function TemplatePage(props) {
         })}
       </div>
       <div className="tagsContainer">
-        {updatedTags.map((tag, index) => {
-          return (
-            <div
-              key={index}
-              className="tag"
-              id={index}
-              style={{
-                textDecoration: selectedTemplate
-                  ? tagsToDelete.includes(tag.id)
-                    ? "line-through"
-                    : "none"
-                  : null,
-                color: selectedTemplate
-                  ? tagsToDelete.includes(tag.id)
-                    ? "#721c24"
-                    : "#000000"
-                  : null,
-              }}
-            >
-              {tag.tag}
-              <div
-                className="deleteTag"
-                onClick={() => {
-                  selectedTemplate
-                    ? handleTagsToDelete(tag.id)
-                    : deleteTag(tag.id);
-                }}
-              >
-                x
-              </div>
-            </div>
-          );
-        })}
+        {updatedTags
+          ? updatedTags.map((tag, index) => {
+              return (
+                <div
+                  key={index}
+                  className="tag"
+                  id={index}
+                  style={{
+                    textDecoration: selectedTemplate
+                      ? tagsToDelete.includes(tag.id)
+                        ? "line-through"
+                        : "none"
+                      : null,
+                    color: selectedTemplate
+                      ? tagsToDelete.includes(tag.id)
+                        ? "#721c24"
+                        : "#000000"
+                      : null,
+                  }}
+                >
+                  {tag.tag}
+                  <div
+                    className="deleteTag"
+                    onClick={() => {
+                      selectedTemplate
+                        ? handleTagsToDelete(tag.id)
+                        : deleteTag(tag.id);
+                    }}
+                  >
+                    x
+                  </div>
+                </div>
+              );
+            })
+          : null}
         {/* NEW ADDED TAGS */}
         {tags.map((tag, index) => {
           return (

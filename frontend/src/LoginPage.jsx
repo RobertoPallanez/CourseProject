@@ -2,29 +2,41 @@ import "./App.css";
 import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
 import { useQuestion } from "./QuestionContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-function LoginPage() {
+function LoginPage(props) {
   const navigate = useNavigate();
+
+  const { setCurrentUser, setTemplates, setForms, BACKEND_URL } = useQuestion();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   function navigateSignupPage() {
     navigate("/SignupPage");
   }
 
-  const { setCurrentUser, setTemplates, setForms, BACKEND_URL } = useQuestion();
-
   async function handleLoginButton(e) {
+    setIsLoading(true);
     try {
       e.preventDefault();
       const response = await axios.post(`${BACKEND_URL}/Login`, {
         email: email,
         password: password,
       });
+      const token = response.data.token;
+      console.log(`token generated`);
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("loggedUser", JSON.stringify(response.data.user));
+      localStorage.setItem(
+        "templates",
+        JSON.stringify(response.data.userTemplates)
+      );
+      props.setIsAuthenticated(true);
+      setIsLoading(false);
       console.log(`response message: ${response.data.message}`);
       if (response.data.message == "Login successful.") {
         //User Login
@@ -113,6 +125,11 @@ function LoginPage() {
         >
           Sign in
         </button>
+        {isLoading && (
+          <div className="spinner2-container">
+            <div className="spinner2"></div>
+          </div>
+        )}
         <p className="mt-1 mb-1 text-body-secondary">
           <span className="signUpButton" onClick={handleContinueButton}>
             Continue

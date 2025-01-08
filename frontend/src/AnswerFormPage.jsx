@@ -17,8 +17,14 @@ function AnswerFormPage(props) {
     setCurrentUser(null);
     setQuestions([]);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
+
+  useEffect(() => {
+    localStorage.removeItem("authToken");
+  }, []);
 
   const {
     questions,
@@ -234,7 +240,7 @@ function AnswerFormPage(props) {
         })}
       </div>
       <div className="createOrBackButton">
-        {selectedTemplate.readOnly ? (
+        {selectedTemplate.readOnly && !currentUser ? (
           <div className="declineContainer">
             <p className="declineMessage">
               Only registered users can answer this form.

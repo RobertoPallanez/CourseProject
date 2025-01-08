@@ -34,6 +34,7 @@ function SubmittedAdminPage(props) {
 
   useEffect(() => {
     setUpdatedAnswers(selectedAnswers);
+    localStorage.removeItem("authToken");
   }, []);
 
   async function handleNewAnswerInput(id, type, newAnswer) {
@@ -92,6 +93,8 @@ function SubmittedAdminPage(props) {
     setSelectedAnswers(null);
     setSelectedFormQuestions(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 

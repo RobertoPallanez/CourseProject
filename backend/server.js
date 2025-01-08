@@ -8,38 +8,13 @@ import cloudinary from "cloudinary";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import jwt from "jsonwebtoken";
+import pkg from "jsonwebtoken";
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
-
-const corsOptions = {
-  origin: [
-    "http://localhost:5173", // local dev URL
-    "https://reactiveformscourseproject.netlify.app", // production URL on Netlify
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.use(cors(corsOptions));
-
-const db = new pg.Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
-
-db.connect();
-app.use(express.json({ limit: "50mb" }));
 
 const sequelize = new Sequelize(
   process.env.RENDERDB_NAME,
@@ -57,6 +32,33 @@ const sequelize = new Sequelize(
   }
 );
 
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const corsOptions = {
+  origin: [
+    "http://localhost:5174", // local dev URL
+    "https://reactiveformscourseproject.netlify.app",
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
+const db = new pg.Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+db.connect();
+app.use(express.json({ limit: "50mb" }));
+
 const Question = sequelize.define(
   "Question",
   {
@@ -73,6 +75,7 @@ const Question = sequelize.define(
         model: "templates",
         key: "id",
       },
+      onDelete: "CASCADE",
     },
     question_text: {
       type: DataTypes.TEXT,
@@ -82,7 +85,7 @@ const Question = sequelize.define(
       type: DataTypes.STRING(50),
       allowNull: false,
       validate: {
-        isIn: [["short answer", "paragraph", "checkbox", "numeric answer"]], // Ensures only allowed values
+        isIn: [["short answer", "paragraph", "checkbox", "numeric answer"]],
       },
     },
     options: {
@@ -121,6 +124,7 @@ const Tag = sequelize.define(
         model: "templates",
         key: "id",
       },
+      onDelete: "CASCADE",
     },
     tag: {
       type: DataTypes.TEXT,
@@ -133,6 +137,7 @@ const Tag = sequelize.define(
         model: "users",
         key: "id",
       },
+      onDelete: "CASCADE",
     },
   },
   {
@@ -187,6 +192,11 @@ const Template = sequelize.define(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
+    },
+    last_update: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
     },
   },
   {
@@ -297,8 +307,8 @@ const Answer = sequelize.define(
     },
   },
   {
-    tableName: "answers", // Explicitly specify the table name
-    timestamps: false, // Disable Sequelize's automatic createdAt and updatedAt fields
+    tableName: "answers",
+    timestamps: false,
   }
 );
 
@@ -355,17 +365,33 @@ app.post("/Register", async (req, res) => {
   const { name, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  await User.create({
-    name: name,
-    email: email,
-    password: hashedPassword,
-  });
-
-  const user = await User.findOne({
+  const existingEmail = await User.findOne({
     where: { email: email },
   });
-  console.log(`user response to send: ${user.dataValues.name}`);
-  res.status(200).json({ message: "User registered successfully.", user });
+
+  if (!existingEmail) {
+    await User.create({
+      name: name,
+      email: email,
+      password: hashedPassword,
+    });
+
+    const user = await User.findOne({
+      where: { email: email },
+    });
+
+    const token = jwt.sign({ id: user.dataValues.id }, process.env.JWT_SECRET, {
+      expiresIn: "10h",
+    });
+
+    console.log(`user response to send: ${user.dataValues.name}`);
+    res
+      .status(200)
+      .json({ message: "User registered successfully.", user, token });
+  } else {
+    console.log(`user email already taken.`);
+    res.status(200).json({ message: "User email already taken." });
+  }
 });
 
 app.post("/Login", async (req, res) => {
@@ -391,21 +417,32 @@ app.post("/Login", async (req, res) => {
 
       if (user.dataValues.status == "active") {
         if (passwordMatch) {
+          const token = jwt.sign(
+            { id: user.dataValues.id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+          );
           if (user.dataValues.role == "admin") {
-            const userTemplates = await Template.findAll();
+            const userTemplates = await Template.findAll({
+              order: [["last_update", "DESC"]],
+            });
+
             res.status(200).json({
               message: "admin Login successful.",
               user: user.dataValues,
               userTemplates,
+              token,
             });
           } else if (user.dataValues.role == "user") {
             const userTemplates = await Template.findAll({
               where: { author_id: user.dataValues.id },
+              order: [["last_update", "DESC"]],
             });
             res.status(200).json({
               message: "Login successful.",
               user: user.dataValues,
               userTemplates,
+              token,
             });
           } else {
             res.status(401).json({ message: "Invalid email or password" });
@@ -427,6 +464,25 @@ app.post("/Login", async (req, res) => {
     console.error("Error querying database", error);
     res.status(500).json({ message: "Internal server error." });
   }
+});
+
+const autenthicateToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Access denied" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: "Invalid token" });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+app.get("/auth", autenthicateToken, (req, res) => {
+  res.status(200).json({ message: "Authenticated", user: req.user });
 });
 
 app.post("/addTemplate", async (req, res) => {
@@ -534,7 +590,10 @@ app.post("/addTemplate", async (req, res) => {
     const userTemplates =
       role === "admin"
         ? await Template.findAll()
-        : await Template.findAll({ where: { author_id: authorId } });
+        : await Template.findAll({
+            where: { author_id: authorId },
+            order: [["last_update", "DESC"]],
+          });
 
     res.status(200).json({
       message: "Template added successfully.",
@@ -596,7 +655,9 @@ app.post("/selectTemplate", async (req, res) => {
 
 app.get("/allTemplates", async (req, res) => {
   try {
-    const templates = await Template.findAll();
+    const templates = await Template.findAll({
+      order: [["last_update", "DESC"]],
+    });
     const tags = await Tag.findAll();
     res.status(200).json({
       message: "all templates selected successfully.",
@@ -616,6 +677,7 @@ app.post("/userTemplates", async (req, res) => {
   try {
     const templates = await Template.findAll({
       where: { author_id: userId },
+      order: [["last_update", "DESC"]],
     });
 
     const tags = await Tag.findAll({
@@ -646,30 +708,35 @@ app.post("/searchUserTemplates", async (req, res) => {
     const templatesByName = await Template.findAll({
       where: {
         name: { [Op.iLike]: `%${search}%` },
+        order: [["last_update", "DESC"]],
       },
     });
 
     const tags = await Tag.findAll({
       where: {
         tag: { [Op.iLike]: `%${search}%` },
+        order: [["last_update", "DESC"]],
       },
     });
 
     const templatesByTag = await Template.findAll({
       where: {
         id: tags.map((tag) => tag.template_id),
+        order: [["last_update", "DESC"]],
       },
     });
 
     const templatesByTopic = await Template.findAll({
       where: {
         topic: { [Op.iLike]: `%${search}%` },
+        order: [["last_update", "DESC"]],
       },
     });
 
     const templatesByAuthor = await Template.findAll({
       where: {
         author_name: { [Op.iLike]: `%${search}%` },
+        order: [["last_update", "DESC"]],
       },
     });
 
@@ -851,9 +918,9 @@ app.post("/deleteTemplate", async (req, res) => {
   });
 
   try {
-    await Question.destroy({
-      where: { template_id: idToDelete },
-    });
+    // await Question.destroy({
+    //   where: { template_id: idToDelete },
+    // });
 
     await Template.destroy({
       where: { id: idToDelete },
@@ -894,6 +961,7 @@ app.put("/updateTemplate", async (req, res) => {
   const templateId = Number(req.body.templateId);
   const questionsToDelete = req.body.deletedQuestions;
   const tagsToDelete = req.body.deletedTags;
+  const lastUpdate = new Date().toISOString();
 
   try {
     const template = await Template.findOne({
@@ -903,6 +971,7 @@ app.put("/updateTemplate", async (req, res) => {
     if (template) {
       template.name = updatedName;
       template.description = updatedDescription;
+      template.last_update = lastUpdate;
       await template.save();
     }
 
@@ -1239,6 +1308,10 @@ app.post("/deleteUser", async (req, res) => {
   const userId = req.body.id;
 
   try {
+    const templates = await Template.destroy({
+      where: { author_id: userId },
+    });
+
     const user = await User.destroy({
       where: { id: userId },
     });
@@ -1294,3 +1367,5 @@ app.post("/getTemplateData", async (req, res) => {
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
+
+export default sequelize;

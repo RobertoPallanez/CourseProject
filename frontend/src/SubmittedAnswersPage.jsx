@@ -6,6 +6,7 @@ import ShortQA from "./ShortQA";
 import ParagraphQA from "./ParagraphQA";
 import CheckboxQA from "./CheckboxQA";
 import NumericQA from "./NumericQA";
+import { useEffect } from "react";
 
 function SubmittedAnswersPage(props) {
   const navigate = useNavigate();
@@ -26,6 +27,10 @@ function SubmittedAnswersPage(props) {
     setIsAnswering,
   } = useQuestion();
 
+  useEffect(() => {
+    localStorage.removeItem("authToken");
+  }, []);
+
   function handleLogout() {
     setQuestions([]);
     setCurrentUser(null);
@@ -33,6 +38,8 @@ function SubmittedAnswersPage(props) {
     setSelectedAnswers(null);
     setSelectedFormQuestions(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 

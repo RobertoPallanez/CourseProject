@@ -7,14 +7,18 @@ import ShortAnswer from "./ShortAnswer";
 import Paragraph from "./Paragraph";
 import Checkboxes from "./Checkboxes";
 import NumericAnswer from "./NumericAnswer";
+import { useEffect } from "react";
 
 function NewForm(props) {
   const navigate = useNavigate();
 
   function handleLogout() {
     setQuestions([]);
+    setCheckboxes([]);
     setCurrentUser(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 
@@ -30,6 +34,7 @@ function NewForm(props) {
     checkboxInput,
     handleCheckboxInput,
     checkboxes,
+    setCheckboxes,
     addCheckbox,
     deleteQuestion,
     formName,
@@ -49,7 +54,25 @@ function NewForm(props) {
     handleImageChange,
     handleSubmissionMode,
     setIsAnswering,
+    isLoading,
   } = useQuestion();
+
+  useEffect(() => {
+    localStorage.removeItem("authToken");
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="loading-spinner">
+        <div className="spinnerBody">
+          <div className="spinner"></div>
+          <div className="spinnerText">
+            Creating template. This could take a few seconds.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="newFormPage">
@@ -241,7 +264,15 @@ function NewForm(props) {
                       </div>
                     );
                   })}
-                  <button className="addCheckboxButton" onClick={addCheckbox}>
+                  <button
+                    className="addCheckboxButton"
+                    onClick={addCheckbox}
+                    disabled={checkboxes.length > 0}
+                    style={{
+                      backgroundColor: checkboxes.length > 0 ? "gray" : "",
+                      cursor: checkboxes.length > 0 ? "not-allowed" : "pointer",
+                    }}
+                  >
                     +
                   </button>
                 </>

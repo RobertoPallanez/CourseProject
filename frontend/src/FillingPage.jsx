@@ -4,6 +4,7 @@ import NavBar from "./NavBar";
 import FormItem from "./FormItem";
 import { useQuestion } from "./QuestionContext";
 import SearchBarPublic from "./SearchBarPublic";
+import { useEffect } from "react";
 
 function FillingPage() {
   const navigate = useNavigate();
@@ -16,13 +17,30 @@ function FillingPage() {
     backToManager,
     setIsAnswering,
     answerFormPage,
+    setTemplates,
   } = useQuestion();
 
   function handleLogout() {
     setCurrentUser(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
+
+  useEffect(() => {
+    const loggedUser = localStorage.getItem("loggedUser");
+    setCurrentUser(loggedUser ? JSON.parse(loggedUser) : null);
+
+    const userTemplates = localStorage.getItem("templates");
+    setTemplates(
+      userTemplates
+        ? userTemplates !== undefined
+          ? JSON.parse(userTemplates)
+          : []
+        : null
+    );
+  }, []);
 
   return (
     <div className="managerPage">
@@ -61,6 +79,7 @@ function FillingPage() {
               name={template.name}
               author={template.author_name}
               date={template.creation_date}
+              last_update={template.last_update}
               topic={template.topic}
               questions={template.questions}
               newFormPage={newFormPage}

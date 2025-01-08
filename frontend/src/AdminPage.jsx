@@ -5,6 +5,7 @@ import FormItem from "./FormItem";
 import CreateForm from "./CreateForm";
 import { useQuestion } from "./QuestionContext";
 import SearchBar from "./SearchBar";
+import { useEffect } from "react";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -29,12 +30,29 @@ function AdminPage() {
     goToUserManager,
     goToFillingAdminPage,
     setIsAnswering,
+    setTemplates,
   } = useQuestion();
+
+  useEffect(() => {
+    const loggedUser = localStorage.getItem("loggedUser");
+    setCurrentUser(loggedUser ? JSON.parse(loggedUser) : null);
+
+    const userTemplates = localStorage.getItem("templates");
+    setTemplates(
+      userTemplates
+        ? userTemplates !== undefined
+          ? JSON.parse(userTemplates)
+          : []
+        : null
+    );
+  }, []);
 
   function handleLogout() {
     setCurrentUser(null);
-    navigate("/");
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
+    navigate("/");
   }
 
   return (
@@ -43,7 +61,9 @@ function AdminPage() {
       <div className="messagesAndLogoutAdmin">
         <div className="messagesAdmin">
           <div className="adminMessage">ADMIN CONTROL PANEL</div>
-          <div className="welcomeMessageAdmin">Hi, {currentUser.name}</div>
+          <div className="welcomeMessageAdmin">
+            Hi, {currentUser?.name || "Guest"}
+          </div>
           <div className="createMessageAdmin">
             <strong>Pick one of all users templates or start a new:</strong>
           </div>
@@ -87,6 +107,7 @@ function AdminPage() {
               name={template.name}
               author={template.author_name}
               date={template.creation_date}
+              last_update={template.last_update}
               questions={template.questions}
               topic={template.topic}
               newFormPage={newFormPage}

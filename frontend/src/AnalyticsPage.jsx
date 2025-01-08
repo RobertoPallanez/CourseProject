@@ -1,6 +1,6 @@
 import "./App.css";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuestion } from "./QuestionContext";
 import NavBar from "./NavBar";
 import { Pie } from "react-chartjs-2";
@@ -56,6 +56,10 @@ function AnalyticsPage(props) {
     setIsAnswering,
   } = useQuestion();
 
+  useEffect(() => {
+    localStorage.removeItem("authToken");
+  }, []);
+
   function handleLogout() {
     setQuestions([]);
     setCurrentUser(null);
@@ -64,6 +68,8 @@ function AnalyticsPage(props) {
     setSelectedFormQuestions(null);
     setForms(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 

@@ -15,15 +15,25 @@ function UserManagerPage() {
     setCurrentUser,
     backToManager,
     users,
+    setUsers,
     goToUserManager,
     goToFillingAdminPage,
     BACKEND_URL,
     setIsAnswering,
   } = useQuestion();
 
+  useEffect(() => {
+    const allUsers = localStorage.getItem("users");
+    setUsers(JSON.parse(allUsers));
+    const loggedUser = localStorage.getItem("loggedUser");
+    setCurrentUser(JSON.parse(loggedUser));
+  }, []);
+
   function handleLogout() {
     setCurrentUser(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 
@@ -98,7 +108,9 @@ function UserManagerPage() {
       <div className="messagesAndLogout">
         <div className="messages">
           <div className="adminMessage">ADMIN CONTROL PANEL</div>
-          <div className="welcomeMessage">Hi, {currentUser.name}</div>
+          <div className="welcomeMessage">
+            Hi, {currentUser?.name || "Guest"}
+          </div>
           <div className="createMessage">
             Manage admin roles, block and delete users:
           </div>

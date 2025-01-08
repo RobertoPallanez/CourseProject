@@ -15,7 +15,8 @@ function SignupPage() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
 
-  const { setCurrentUser, setTemplates, BACKEND_URL } = useQuestion();
+  const { currentUser, setCurrentUser, setTemplates, BACKEND_URL } =
+    useQuestion();
 
   async function handleSignupButton(e) {
     try {
@@ -26,11 +27,23 @@ function SignupPage() {
         password: password,
       });
 
-      setUser(response.data.user);
-      setError("");
-      setCurrentUser(response.data.user);
-      setTemplates([]);
-      navigate("/ManagerPage");
+      if (response.data.message !== "User email already taken.") {
+        const token = response.data.token;
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("loggedUser", JSON.stringify(response.data.user));
+        localStorage.setItem(
+          "templates",
+          JSON.stringify(response.data.userTemplates)
+        );
+        setUser(response.data.user);
+        setError("");
+        setCurrentUser(response.data.user);
+        setTemplates([]);
+        navigate("/ManagerPage");
+      } else if (response.data.message == "User email already taken.") {
+        setError("User email already taken.");
+        console.log(error);
+      }
     } catch (err) {
       console.error("Error during registration:", err);
       setError(err.response ? err.response.data.message : "Server Error");
@@ -111,6 +124,7 @@ function SignupPage() {
           </span>
           {"."}
         </p>
+        {error !== "" ? <span>{error}</span> : null}
       </form>
     </div>
   );

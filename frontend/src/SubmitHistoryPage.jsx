@@ -32,6 +32,8 @@ function SubmitHistoryPage(props) {
     setSelectedAnswers(null);
     setSelectedFormQuestions(null);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 
@@ -54,6 +56,7 @@ function SubmitHistoryPage(props) {
   }
 
   useEffect(() => {
+    localStorage.removeItem("authToken");
     if (selectedForm !== null) {
       if (currentUser.role === "admin") {
         navigate("/SubmittedAdminPage");

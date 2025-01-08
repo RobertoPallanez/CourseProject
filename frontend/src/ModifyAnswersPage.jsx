@@ -16,6 +16,8 @@ function ModifyAnswersPage(props) {
     setCurrentUser(null);
     setQuestions([]);
     setIsAnswering(false);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 
@@ -39,6 +41,7 @@ function ModifyAnswersPage(props) {
   useEffect(() => {
     setSelectedForm(null);
     setUpdatedAnswers(existingAnswers);
+    localStorage.removeItem("authToken");
   }, []);
 
   function handleNewAnswerInput(id, type, newAnswer) {

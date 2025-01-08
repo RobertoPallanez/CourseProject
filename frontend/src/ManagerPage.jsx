@@ -5,6 +5,7 @@ import FormItem from "./FormItem";
 import CreateForm from "./CreateForm";
 import { useQuestion } from "./QuestionContext";
 import SearchBar from "./SearchBar";
+import { useEffect } from "react";
 
 function ManagerPage() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ function ManagerPage() {
     addCheckbox,
     deleteQuestion,
     templates,
+    setTemplates,
     newFormPage,
     currentUser,
     setCurrentUser,
@@ -30,9 +32,25 @@ function ManagerPage() {
     goToFillingPage,
   } = useQuestion();
 
+  useEffect(() => {
+    const loggedUser = localStorage.getItem("loggedUser");
+    setCurrentUser(loggedUser ? JSON.parse(loggedUser) : null);
+
+    const userTemplates = localStorage.getItem("templates");
+    setTemplates(
+      userTemplates
+        ? userTemplates !== undefined
+          ? JSON.parse(userTemplates)
+          : []
+        : null
+    );
+  }, []);
+
   function handleLogout() {
     setIsAnswering(false);
     setCurrentUser(null);
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("loggedUser");
     navigate("/");
   }
 
@@ -42,7 +60,9 @@ function ManagerPage() {
       <div className="messagesAndLogout">
         <div className="messages">
           <div className="roleMessage">USER CONTROL PANEL</div>
-          <div className="welcomeMessage">Hi, {currentUser.name}</div>
+          <div className="welcomeMessage">
+            Hi, {currentUser?.name || "Guest"}
+          </div>
           <div className="createMessage">
             Pick one of your forms or start a new
           </div>
@@ -83,6 +103,7 @@ function ManagerPage() {
               name={template.name}
               author={template.author_name}
               date={template.creation_date}
+              last_update={template.last_update}
               questions={template.questions}
               topic={template.topic}
               newFormPage={newFormPage}

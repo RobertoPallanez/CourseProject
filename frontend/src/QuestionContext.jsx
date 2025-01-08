@@ -56,6 +56,7 @@ export function QuestionProvider({ children }) {
   const [avgCompletion, setAvgCompletion] = useState(0);
   const [formsByRegistered, setFormsByRegistered] = useState(0);
   const [analyticsTrigger, setAnalyticsTrigger] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // const BACKEND_URL = "http://localhost:5000";
   const BACKEND_URL = "https://courseproject-reactiveforms.onrender.com";
@@ -119,6 +120,7 @@ export function QuestionProvider({ children }) {
       const response = await axios.get(`${BACKEND_URL}/allUsers`);
       const allUsers = response.data.users;
       setUsers(allUsers);
+      localStorage.setItem("users", JSON.stringify(response.data.users));
       setError("");
     } catch (err) {
       console.error("could not retrieve all users from data base.", err);
@@ -247,6 +249,10 @@ export function QuestionProvider({ children }) {
       const response = await axios.get(`${BACKEND_URL}/allTemplates`);
       const allTemplates = response.data.templates;
       setTemplates(allTemplates);
+      localStorage.setItem(
+        "templates",
+        JSON.stringify(response.data.templates)
+      );
       setError("");
     } catch (err) {
       console.error("could not retrieve all templates.", err);
@@ -261,6 +267,10 @@ export function QuestionProvider({ children }) {
       });
       const userTemplates = response.data.templates;
       setTemplates(userTemplates);
+      localStorage.setItem(
+        "templates",
+        JSON.stringify(response.data.templates)
+      );
       setError("");
     } catch (err) {
       console.error("could not retrieve all templates.", err);
@@ -412,6 +422,7 @@ export function QuestionProvider({ children }) {
   }
 
   async function addTemplate() {
+    setIsLoading(true);
     try {
       const response = await axios.post(`${BACKEND_URL}/addTemplate`, {
         name: `${templateName ? templateName : "Untitled template"}`,
@@ -432,7 +443,14 @@ export function QuestionProvider({ children }) {
       setQuestions([]);
       setSelectedImage(null);
       setTemplates(response.data.userTemplates);
+      localStorage.setItem(
+        "templates",
+        JSON.stringify(response.data.userTemplates)
+      );
+      setIsLoading(false);
+      alert("Template created successfuly!");
     } catch (err) {
+      alert("Could not create template. Please try again.");
       console.error("no forms from user or error receiving from server.", err);
       setError(err.response ? err.response.data.message : "Server Error");
     }
@@ -468,6 +486,10 @@ export function QuestionProvider({ children }) {
       });
 
       setTemplates(response.data.userTemplates);
+      localStorage.setItem(
+        "templates",
+        JSON.stringify(response.data.userTemplates)
+      );
       setError("");
       if (response.data.user.role == "user") {
         navigate("/ManagerPage");
@@ -611,6 +633,7 @@ export function QuestionProvider({ children }) {
         tagInput,
         handleQuestionInput,
         type,
+        setType,
         handleQuestionType,
         question,
         addQuestion,
@@ -620,6 +643,7 @@ export function QuestionProvider({ children }) {
         handleCheckboxInput,
         addCheckbox,
         checkboxes,
+        setCheckboxes,
         deleteQuestion,
         forms,
         setForms,
@@ -650,7 +674,9 @@ export function QuestionProvider({ children }) {
         handleAnswerCheckbox,
         goToUserManager,
         users,
+        setUsers,
         getAllTemplates,
+        getUserTemplates,
         isAnswering,
         setIsAnswering,
         selectedForm,
@@ -705,6 +731,8 @@ export function QuestionProvider({ children }) {
         existingAnswers,
         setExistingAnswers,
         BACKEND_URL,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}
