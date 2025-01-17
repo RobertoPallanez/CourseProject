@@ -2,6 +2,7 @@ import express from "express";
 import pg from "pg";
 import cors from "cors";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { Sequelize, DataTypes, Op } from "sequelize";
 import dotenv from "dotenv";
 import cloudinary from "cloudinary";
@@ -10,11 +11,62 @@ import path from "path";
 import { fileURLToPath } from "url";
 import jwt from "jsonwebtoken";
 import pkg from "jsonwebtoken";
+import jsforce from "jsforce";
+import axios from "axios";
+
+const app = express();
+app.use(express.json());
+
+app.post("/fetch-aggregated-data", async (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+
+  if (!token) {
+    return res.status(400).json({ error: "Token is missing" });
+  }
+
+  try {
+    const user = await User.findOne({ where: { odoo_token: token } });
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    let templates = [];
+
+    if (user.role == "user") {
+      templates = await Template.findAll({
+        where: { author_id: user.id },
+      });
+    } else if (user.role == "admin") {
+      templates = await Template.findAll();
+    }
+
+    const templatesData = templates.map((template) => ({
+      id: template.id,
+      name: template.name,
+      topic: template.topic,
+      imageUrl: template.image_url,
+      description: template.description,
+      authorId: template.author_id,
+      authorName: template.author_name,
+      creationDate: template.creation_date,
+      lastUpdate: template.last_update,
+      readOnly: template.readOnly,
+    }));
+
+    res.status(200).json({
+      message: "Templates fetched successfully",
+      templates: templatesData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const app = express();
 
 const sequelize = new Sequelize(
   process.env.RENDERDB_NAME,
@@ -40,7 +92,7 @@ cloudinary.config({
 
 const corsOptions = {
   origin: [
-    "http://localhost:5174", // local dev URL
+    "http://localhost:5173", // local dev URL
     "https://reactiveformscourseproject.netlify.app",
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -57,7 +109,16 @@ const db = new pg.Client({
 });
 
 db.connect();
-app.use(express.json({ limit: "50mb" }));
+// app.use(express.json({ limit: "50mb" }));
+
+const conn = new jsforce.Connection({
+  oauth2: {
+    // loginUrl: process.env.SALEFORCE_LOGIN_URL,
+    clientId: process.env.SALESFORCE_CLIENT_ID, // Consumer Key
+    clientSecret: process.env.SALESFORCE_CLIENT_SECRET, // Consumer Secret
+    redirectUri: process.env.REDIRECT_URI, // Callback URL
+  },
+});
 
 const Question = sequelize.define(
   "Question",
@@ -236,6 +297,15 @@ const User = sequelize.define(
       allowNull: false,
       defaultValue: "active",
     },
+    linked_sf: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false,
+    },
+    odoo_token: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
   {
     tableName: "users",
@@ -370,10 +440,13 @@ app.post("/Register", async (req, res) => {
   });
 
   if (!existingEmail) {
+    const odooToken = crypto.randomBytes(32).toString("Hex");
+
     await User.create({
       name: name,
       email: email,
       password: hashedPassword,
+      odoo_token: odooToken,
     });
 
     const user = await User.findOne({
@@ -420,7 +493,7 @@ app.post("/Login", async (req, res) => {
           const token = jwt.sign(
             { id: user.dataValues.id },
             process.env.JWT_SECRET,
-            { expiresIn: "1h" }
+            { expiresIn: "10h" }
           );
           if (user.dataValues.role == "admin") {
             const userTemplates = await Template.findAll({
@@ -1306,19 +1379,36 @@ app.post("/blockOrUnblockUser", async (req, res) => {
 
 app.post("/deleteUser", async (req, res) => {
   const userId = req.body.id;
+  const userEmail = req.body.email;
 
   try {
+    const userInfo = await conn.login(
+      process.env.SALESFORCE_USERNAME,
+      process.env.SALESFORCE_PASSWORD + process.env.SALESFORCE_SECURITY_TOKEN
+    );
+
     const templates = await Template.destroy({
       where: { author_id: userId },
     });
+
+    const userToDelete = await User.findOne({ where: { id: userId } });
+
+    const existingContact = await conn.query(
+      `SELECT Id FROM Contact WHERE Email = '${userEmail}' LIMIT 1`
+    );
 
     const user = await User.destroy({
       where: { id: userId },
     });
 
+    if (existingContact.records.length > 0) {
+      const contactId = existingContact.records[0].Id;
+      await conn.sobject("Contact").destroy(contactId);
+    }
+
     res.status(200).json({
       message: "user deleted successfully.",
-      user,
+      userToDelete,
     });
   } catch (err) {
     res.status(500).json({
@@ -1364,8 +1454,124 @@ app.post("/getTemplateData", async (req, res) => {
   }
 });
 
+app.post("/api/salesforce/create-contact", async (req, res) => {
+  const name = req.body.name;
+  const email = req.body.email;
+  const phone = req.body.phone;
+  try {
+    // Login to Salesforce
+    const userInfo = await conn.login(
+      process.env.SALESFORCE_USERNAME,
+      process.env.SALESFORCE_PASSWORD + process.env.SALESFORCE_SECURITY_TOKEN
+    );
+
+    console.log(`SF User id: ${userInfo.id}`);
+
+    // Check if contact with the same email already exists
+    const existingContact = await conn.query(
+      `SELECT Id FROM Contact WHERE Email = '${email}' LIMIT 1`
+    );
+
+    if (existingContact.records.length > 0) {
+      const user = await User.findOne({
+        where: { email: email },
+      });
+
+      user.linked_sf = true;
+      await user.save();
+
+      return res.status(200).json({
+        message: "Email already used. Contact already exists.",
+      });
+    }
+
+    // If no existing contact, create new contact
+    const result = await conn.sobject("Contact").create({
+      LastName: name,
+      Email: email,
+      Phone: phone,
+    });
+
+    const user = await User.findOne({
+      where: { email: email },
+    });
+
+    user.linked_sf = true;
+    await user.save();
+
+    if (result.success) {
+      res
+        .status(200)
+        .json({ message: "Account linked successfully", id: result.id });
+    } else {
+      res
+        .status(400)
+        .json({ message: "Account link failed", error: result.errors });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error linking to Salesforce", error });
+  }
+});
+
+app.post("/getUserFromSF", async (req, res) => {
+  const user = req.body.currentUser;
+  const email = user.email;
+
+  try {
+    const userInfo = await conn.login(
+      process.env.SALESFORCE_USERNAME,
+      process.env.SALESFORCE_PASSWORD + process.env.SALESFORCE_SECURITY_TOKEN
+    );
+
+    const contact = await conn.query(
+      `SELECT Phone FROM Contact WHERE Email = '${email}' LIMIT 1`
+    );
+
+    // Check if any records were found
+    if (contact.records.length > 0) {
+      const phone = contact.records[0].Phone; // Ensure correct casing
+      console.log(`Phone: ${phone}`);
+      res.status(200).json({ message: "phone retrieved successfully.", phone });
+    } else {
+      const phone = "no phone";
+      console.log(phone);
+      res
+        .status(200)
+        .json({ message: "no phone registered for contact.", phone });
+    }
+  } catch (error) {
+    console.error("Error retrieving phone:", error);
+    res.status(500).json({ message: "Could not retrieve current user", error });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
 
 export default sequelize;
+
+// async function generateTokensForExistingUsers() {
+//   try {
+//     // Find users without an odoo_token
+//     const usersWithoutToken = await User.findAll({
+//       where: { odoo_token: null },
+//     });
+
+//     for (const user of usersWithoutToken) {
+//       // Generate a new token
+//       const token = crypto.randomBytes(32).toString("hex");
+
+//       // Update the user's odoo_token
+//       user.odoo_token = token;
+//       await user.save();
+//     }
+
+//     console.log("Tokens generated for users without an odoo_token.");
+//   } catch (error) {
+//     console.error("Error generating tokens for users:", error);
+//   }
+// }
+
+// generateTokensForExistingUsers();

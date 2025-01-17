@@ -18,6 +18,7 @@ function FillingPage() {
     setIsAnswering,
     answerFormPage,
     setTemplates,
+    goToCreateSFAccount,
   } = useQuestion();
 
   function handleLogout() {
@@ -32,14 +33,13 @@ function FillingPage() {
     const loggedUser = localStorage.getItem("loggedUser");
     setCurrentUser(loggedUser ? JSON.parse(loggedUser) : null);
 
-    const userTemplates = localStorage.getItem("templates");
-    setTemplates(
-      userTemplates
-        ? userTemplates !== undefined
-          ? JSON.parse(userTemplates)
-          : []
-        : null
-    );
+    try {
+      const userTemplates = localStorage.getItem("templates");
+      setTemplates(userTemplates ? JSON.parse(userTemplates) : []);
+    } catch (error) {
+      console.error("Invalid templates JSON:", error);
+      setTemplates([]);
+    }
   }, []);
 
   return (
@@ -60,7 +60,10 @@ function FillingPage() {
             <button className="userTemplates" onClick={backToManager}>
               My templates
             </button>
-            <button className="publicForms">Public Forms</button>
+            <button className="publicForms">Submit a form</button>
+            <button className="publicForms" onClick={goToCreateSFAccount}>
+              Link to SaleForce
+            </button>
           </div>
         ) : null}
         <div className="bannerAndLogout">

@@ -35,6 +35,7 @@ export function QuestionProvider({ children }) {
   const [selectedFormQuestions, setSelectedFormQuestions] = useState(null);
 
   const [currentUser, setCurrentUser] = useState(null);
+  const [userPhone, setUserPhone] = useState("");
   const [users, setUsers] = useState([]);
   const [isAnswering, setIsAnswering] = useState(false);
   const [existingForm, setExistingForm] = useState(null);
@@ -626,6 +627,20 @@ export function QuestionProvider({ children }) {
     }
   }
 
+  async function goToCreateSFAccount() {
+    if (!currentUser.linked_sf) {
+      navigate("/CreateSFAccount");
+    } else {
+      const response = await axios.post(`${BACKEND_URL}/getUserFromSF`, {
+        currentUser,
+      });
+      const contactPhone = response.data.phone;
+      console.log(`phone: ${contactPhone}`);
+      setUserPhone(contactPhone);
+      navigate("/CreateSFAccount");
+    }
+  }
+
   return (
     <QuestionContext.Provider
       value={{
@@ -733,6 +748,8 @@ export function QuestionProvider({ children }) {
         BACKEND_URL,
         isLoading,
         setIsLoading,
+        goToCreateSFAccount,
+        userPhone,
       }}
     >
       {children}

@@ -305,6 +305,7 @@ div {
   justify-content: right;
   align-items: right;
   width: 100%;
+  margin-top: 10px;
 }
 
 .templateEditor {
@@ -1264,4 +1265,66 @@ div {
   width: 35px;
   height: 35px;
   animation: spin 0.8s linear infinite;
+}
+
+.saleforceFormContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.saleforceForm {
+  width: fit-content;
+  margin: 15px;
+}
+
+.saleforceFormText {
+  font-family: "Product Sans";
+}
+
+.linkedIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.linkedText {
+  font-weight: bold;
+  width: 90%;
+  display: flex;
+  justify-content: right;
+  padding-right: 3.75rem;
+}
+
+.linkedButton {
+  display: flex;
+  align-items: center;
+}
+
+.tokenBox {
+  margin-top: 10px;
+  display: flex;
+  justify-content: start;
+  max-width: 700px;
+  height: 40px;
+}
+
+button.showTokenButton {
+  background-color: #361164;
+  font-size: 0.65rem;
+  margin: 0;
+  flex-shrink: 0;
+  margin-right: 10px;
+  width: 130px;
+  transition: 0.2s ease;
+}
+
+button.showTokenButton:hover {
+  background-color: #000000;
+}
+
+.clipboardIcon {
+  width: 15px;
+  height: 15px;
 }

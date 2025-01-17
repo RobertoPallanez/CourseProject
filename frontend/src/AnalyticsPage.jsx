@@ -285,6 +285,7 @@ function AnalyticsPage(props) {
               </strong>
             </div>
           </div>
+          {/* PIE CHARTS FOR TEMPLATE CONTAINER */}
           <div className="templatePieChartsContainer">
             <div
               className="pieChart"
@@ -330,7 +331,7 @@ function AnalyticsPage(props) {
             </div>
           </div>
         </div>
-        {/* PIE CHARTS FOR TEMPLATE CONTAINER */}
+        {/* ANALYSIS BY QUESTIONS CONTAINER */}
         <div className="currentFormHeader">DATA ANALYSIS BY QUESTION</div>
         <div className="QASelectorContainer">
           <div>Select the question you want to analyse:</div>

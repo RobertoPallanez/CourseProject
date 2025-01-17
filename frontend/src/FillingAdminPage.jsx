@@ -18,6 +18,7 @@ function FillingAdminPage() {
     goToUserManager,
     backToManager,
     setIsAnswering,
+    goToCreateSFAccount,
   } = useQuestion();
 
   function handleLogout() {
@@ -32,14 +33,13 @@ function FillingAdminPage() {
     const loggedUser = localStorage.getItem("loggedUser");
     setCurrentUser(loggedUser ? JSON.parse(loggedUser) : null);
 
-    const userTemplates = localStorage.getItem("templates");
-    setTemplates(
-      userTemplates
-        ? userTemplates !== undefined
-          ? JSON.parse(userTemplates)
-          : []
-        : null
-    );
+    try {
+      const userTemplates = localStorage.getItem("templates");
+      setTemplates(userTemplates ? JSON.parse(userTemplates) : []);
+    } catch (error) {
+      console.error("Invalid templates JSON:", error);
+      setTemplates([]);
+    }
   }, []);
 
   return (
@@ -63,6 +63,9 @@ function FillingAdminPage() {
             users
           </button>
           <button className="adminForms">submit a form</button>
+          <button className="publicForms" onClick={goToCreateSFAccount}>
+            Link to SaleForce
+          </button>
         </div>
         <div className="bannerAndLogout">
           <div onClick={handleLogout} className="logoutButton">

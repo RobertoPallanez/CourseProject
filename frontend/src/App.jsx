@@ -16,6 +16,7 @@ import FillingAdminPage from "./FillingAdminPage";
 import AnalyticsPage from "./AnalyticsPage";
 import ModifyAnswersPage from "./ModifyAnswersPage";
 import SubmittedAdminPage from "./SubmittedAdminPage";
+import CreateSFAccount from "./CreateSFAccount";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuestion } from "./QuestionContext";
@@ -32,7 +33,7 @@ function App() {
     const verifyToken = async () => {
       const token = localStorage.getItem("authToken");
       if (!token) {
-        setIsAuthenticated(false); // Explicitly set as not authenticated
+        setIsAuthenticated(false);
         if (!publicRoutes.includes(location.pathname)) {
           navigate("/");
         }
@@ -71,7 +72,7 @@ function App() {
       <div className="loading-spinner">
         <div className="spinner"></div>
       </div>
-    ); // Display a loading spinner or message if needed
+    );
   }
 
   return (
@@ -87,7 +88,15 @@ function App() {
               />
             }
           />
-          <Route path="/SignupPage" element={<SignupPage />} />
+          <Route
+            path="/SignupPage"
+            element={
+              <SignupPage
+                isAuthenticated={isAuthenticated}
+                setIsAuthenticated={setIsAuthenticated}
+              />
+            }
+          />
           <Route
             path="/ManagerPage"
             element={isAuthenticated ? <ManagerPage /> : <Navigate to="/" />}
@@ -151,6 +160,12 @@ function App() {
           <Route
             path="/NewForm"
             element={isAuthenticated ? <NewForm /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/CreateSFAccount"
+            element={
+              isAuthenticated ? <CreateSFAccount /> : <Navigate to="/" />
+            }
           />
         </Routes>
       </QuestionProvider>

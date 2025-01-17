@@ -5,12 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node",
+      "name": "Odoo",
+      "type": "debugpy",
       "request": "launch",
-      "name": "Launch Program",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\backend\\server.js",
-      "envFile": "${workspaceFolder}\\backend\\.env" // Ensure this points to your .env file
+      "program": "${workspaceRoot}/odoo/odoo-bin",
+      "args": ["-c", "${workspaceFolder}/odoo/odoo.conf"],
+      "gevent": false,
+      "console": "integratedTerminal",
+      "justMyCode": false
     }
   ]
 }

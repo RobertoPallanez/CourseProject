@@ -20,6 +20,7 @@ function UserManagerPage() {
     goToFillingAdminPage,
     BACKEND_URL,
     setIsAnswering,
+    goToCreateSFAccount,
   } = useQuestion();
 
   useEffect(() => {
@@ -85,13 +86,14 @@ function UserManagerPage() {
     }
   }
 
-  async function deleteUser(userId) {
+  async function deleteUser(userId, userEmail) {
     try {
       const response = await axios.post(`${BACKEND_URL}/deleteUser`, {
         id: userId,
+        email: userEmail,
       });
-      const user = response.data.user.name;
-      console.log(`user ${user} deleted.`);
+      const user = response.data.userToDelete.name;
+      console.log(`user ${user} delete from SALESFORCE and database`);
       setRefresh(!refresh);
     } catch (error) {
       console.error("Error trying to delete user.", error);
@@ -122,6 +124,9 @@ function UserManagerPage() {
           <button className="adminUsers">users</button>
           <button className="adminForms" onClick={goToFillingAdminPage}>
             submit a form
+          </button>
+          <button className="publicForms" onClick={goToCreateSFAccount}>
+            Link to SaleForce
           </button>
         </div>
         <div className="bannerAndLogout">
@@ -181,7 +186,7 @@ function UserManagerPage() {
                   title="delete"
                   src="deleteUserIcon.svg"
                   className="demoteIcon"
-                  onClick={() => deleteUser(user.id)}
+                  onClick={() => deleteUser(user.id, user.email)}
                 />
               </div>
             </div>

@@ -5,7 +5,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuestion } from "./QuestionContext";
 
-function SignupPage() {
+function SignupPage(props) {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -40,6 +40,7 @@ function SignupPage() {
         setUser(response.data.user);
         setError("");
         setCurrentUser(response.data.user);
+        props.setIsAuthenticated(true);
         setTemplates([]);
         navigate("/ManagerPage");
       } else if (response.data.message == "User email already taken.") {
